@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间线 - Zhou Yue 嵌入式博客</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-light.min.css" id="hljs-theme-light">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css" id="hljs-theme-dark" disabled>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.10.0/tsparticles.bundle.min.js"></script>
+    <script>
+        function syncHljsTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.getElementById('hljs-theme-light').disabled = isDark;
+            document.getElementById('hljs-theme-dark').disabled = !isDark;
+        }
+        syncHljsTheme();
+        document.addEventListener('themeChanged', syncHljsTheme);
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+            AOS.init({ duration: 600, once: true });
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            mermaid.initialize({ startOnLoad: true, theme: isDark ? 'dark' : 'default' });
+        });
+    </script>
+</head>
+<body>
+    <div id="tsparticles" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></div>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="bi bi-cpu"></i> Zhou Yue 嵌入式博客
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-house"></i> 首页</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="timeline.html"><i class="bi bi-clock-history"></i> 时间线</a></li>
+                    <li class="nav-item"><a class="nav-link" href="archive.html"><i class="bi bi-archive"></i> 归档</a></li>
+                    <li class="nav-item"><a class="nav-link" href="tags.html"><i class="bi bi-tags"></i> 标签</a></li>
+                    <li class="nav-item"><a class="nav-link" href="search.html"><i class="bi bi-search"></i> 搜索</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="bi bi-person"></i> 关于</a></li>
+                </ul>
+                <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-2"><i class="bi bi-moon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <h1 class="mb-4"><i class="bi bi-clock-history"></i> 时间线</h1>
+        <p class="text-secondary mb-4">按时间倒序浏览所有文章</p>
+
+        <div id="timeline-container">
+            <div class="text-secondary">加载中...</div>
+        </div>
+    </main>
+
+    <footer class="bg-body-tertiary border-top mt-5 py-4">
+        <div class="container text-center text-secondary">
+            © 2026 Zhou Yue · 用 <i class="bi bi-heart-fill text-danger"></i> 和 <i class="bi bi-tools"></i> 写
+        </div>
+    </footer>
+
+    <a href="#top" id="back-to-top" class="btn btn-primary rounded-circle position-fixed"
+       style="bottom: 30px; right: 30px; display: none; z-index: 999;">
+        <i class="bi bi-arrow-up"></i>
+    </a>
+
+    <script>
+        const POSTS = [
+            {
+                "url": "posts/2026-09-23-rp2350-winusb.html",
+                "title": "RP2350 WINUSB 自动装驱动 — 完整实战方案",
+                "date": "2026-09-23",
+                "category": "USB",
+                "tags": ["RP2350", "WINUSB", "TinyUSB"],
+                "description": "在 RP2350 上实现 USB vendor class 设备，让 Windows 自动识别并安装 WinUSB.sys。"
+            },
+            {
+                "url": "posts/2026-09-15-cmsis-fft.html",
+                "title": "CMSIS-DSP Q15 FFT 性能对比",
+                "date": "2026-09-15",
+                "category": "DSP",
+                "tags": ["CMSIS-DSP", "ARM", "FFT"],
+                "description": "对比 KISS FFT, CMSIS-DSP, ARM DSP 库在 RP2040/RP2350 上的性能差异。"
+            },
+            {
+                "url": "posts/2026-09-10-qemu-linux-driver.html",
+                "title": "QEMU 模拟 i.MX6ULL 跑 Linux 6.1",
+                "date": "2026-09-10",
+                "category": "Linux",
+                "tags": ["QEMU", "Linux", "Kernel"],
+                "description": "用 QEMU 模拟 i.MX6ULL 开发板，编写字符设备驱动模块。"
+            },
+            {
+                "url": "posts/2026-09-01-stm32-rs485.html",
+                "title": "STM32 RS485 总线调试实战",
+                "date": "2026-09-01",
+                "category": "Embedded",
+                "tags": ["STM32", "RS485", "Modbus"],
+                "description": "RS485 硬件设计要点、Modbus 协议解析与常见坑。"
+            }
+        ];
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        function groupByYearMonth(posts) {
+            const groups = {};
+            posts.forEach(p => {
+                const ym = (p.date || '').slice(0, 7);  // YYYY-MM
+                if (!groups[ym]) groups[ym] = [];
+                groups[ym].push(p);
+            });
+            return Object.entries(groups).sort((a, b) => b[0].localeCompare(a[0]));
+        }
+
+        function formatYM(ym) {
+            if (!ym || ym.length < 7) return ym;
+            const [y, m] = ym.split('-');
+            return `${y} 年 ${parseInt(m)} 月`;
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            if (!container) return;
+
+            const groups = groupByYearMonth(POSTS);
+
+            container.innerHTML = `
+                <div class="timeline position-relative ps-4">
+                    ${groups.map(([ym, posts]) => `
+                        <div class="timeline-group mb-5" data-aos="fade-up">
+                            <h3 class="h4 text-primary border-bottom pb-2 mb-3">
+                                <i class="bi bi-calendar-event"></i> ${formatYM(ym)}
+                                <span class="badge text-bg-secondary">${posts.length} 篇</span>
+                            </h3>
+                            <div class="timeline-items">
+                                ${posts.map((p, i) => `
+                                    <div class="timeline-item mb-3 ps-3 position-relative"
+                                         data-aos="fade-left" data-aos-delay="${i * 50}">
+                                        <div class="timeline-dot position-absolute bg-primary rounded-circle"
+                                             style="left: -22px; top: 8px; width: 10px; height: 10px;"></div>
+                                        <time class="text-secondary small">
+                                            <i class="bi bi-calendar3"></i> ${p.date}
+                                        </time>
+                                        <h4 class="h6 mt-1 mb-1">
+                                            <a href="${p.url}" class="text-decoration-none">${escapeHtml(p.title)}</a>
+                                        </h4>
+                                        <p class="text-secondary small mb-1">${escapeHtml(p.description || '')}</p>
+                                        <div class="post-tags">
+                                            ${(p.tags || []).slice(0, 3).map(t =>
+                                                `<a href="tags.html#${encodeURIComponent(t)}"
+                                                   class="badge text-bg-light text-secondary">
+                                                    ${escapeHtml(t)}
+                                                </a>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        renderTimeline();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/particles.js"></script>
+    <script src="assets/theme.js"></script>
+</body>
+</html>

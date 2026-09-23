@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RP2350 WINUSB 自动装驱动 — 完整实战方案</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/style.css">
+
+    <!-- ★ 代码高亮: highlight.js (浅色主题, 自定义背景适应明/暗) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-light.min.css" id="hljs-theme-light">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css" id="hljs-theme-dark" disabled>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+
+    <!-- ★ 图表: Mermaid -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+
+    <!-- ★ 背景粒子特效: tsparticles -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.10.0/tsparticles.bundle.min.js"></script>
+
+    <!-- ★ 主题切换 - highlight.js 同步 -->
+    <script>
+        function syncHljsTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const light = document.getElementById('hljs-theme-light');
+            const dark = document.getElementById('hljs-theme-dark');
+            if (light) light.disabled = isDark;
+            if (dark) dark.disabled = !isDark;
+        }
+        syncHljsTheme();
+        document.addEventListener('themeChanged', syncHljsTheme);
+    </script>
+
+    <!-- ★ 初始化 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            mermaid.initialize({ startOnLoad: true, theme: isDark ? 'dark' : 'default' });
+        });
+    </script>
+</head>
+<body>
+    <div id="tsparticles" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></div>
+
+    <!-- ★ 顶部导航 -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="../index.html">
+                <i class="bi bi-cpu"></i> Zhou Yue 嵌入式博客
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html"><i class="bi bi-house"></i> 首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../archive.html"><i class="bi bi-archive"></i> 归档</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../tags.html"><i class="bi bi-tags"></i> 标签</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../search.html"><i class="bi bi-search"></i> 搜索</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../about.html"><i class="bi bi-person"></i> 关于</a></li>
+                </ul>
+                <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-2"><i class="bi bi-moon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ★ 文章主体 (Bootstrap 布局) -->
+    <main class="container my-5">
+        <article class="post-content card shadow-sm p-4">
+            <header class="mb-4 pb-3 border-bottom">
+                <time class="text-secondary small">
+                    <i class="bi bi-calendar3"></i> 2026-09-23
+                </time>
+                <h1 class="mt-2 mb-3">
+                    <i class="bi bi-cpu"></i> RP2350 WINUSB 自动装驱动 — 完整实战方案
+                </h1>
+                <div class="post-tags">
+                    <span class="badge text-bg-secondary">RP2350</span>
+                    <span class="badge text-bg-secondary">Pico 2</span>
+                    <span class="badge text-bg-secondary">WINUSB</span>
+                    <span class="badge text-bg-secondary">TinyUSB</span>
+                    <span class="badge text-bg-secondary">USB</span>
+                    <span class="badge text-bg-secondary">Embedded</span>
+                </div>
+            </header>
+
+            <!-- ★ 正文 -->
+    PICO_STDIO_USB_RESET_INTERFACE_SUPPORT_MS_OS_20_DESCRIPTOR=1
+    PICO_STDIO_USB_RESET_INTERFACE_MS_OS_20_DESCRIPTOR_ITF=2
+    PICO_STDIO_USB_RESET_INTERFACE_SUPPORT_RESET_TO_BOOTSEL=1
+    PICO_STDIO_USB_RESET_BOOTSEL_INTERFACE_DISABLE_MASK=0
+)
+</code></pre>
+
+            <p>然后设备接口：</p>
+            <pre><code>Interface 0: CDC Control
+Interface 1: CDC Data
+Interface 2: Vendor (Reset / WINUSB)  ← Windows 自动装 WinUSB.sys
+</code></pre>
+
+            <h2>5. 完整代码（基于 pico-examples dev_multi_cdc）</h2>
+
+            <h3>5.1 CMakeLists.txt</h3>
+            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.13)
+include(pico_sdk_import.cmake)
+project(rp2350_winusb C CXX ASM)
+pico_sdk_init()
+
+add_executable(rp2350_winusb
+    main.c
+    usb_descriptors.c
+)
+
+target_include_directories(rp2350_winusb PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${pico-sdk-src}/src/rp2_common/pico_stdio_usb/include
+)
+
+target_link_libraries(rp2350_winusb PRIVATE
+    pico_stdlib
+    pico_unique_id
+    tinyusb_device
+    tinyusb_board
+)
+
+pico_enable_stdio_usb(rp2350_winusb 1)
+target_compile_definitions(rp2350_winusb PRIVATE
+    PICO_STDIO_USB_ENABLE_RESET_VIA_VENDOR_INTERFACE=1
+    PICO_STDIO_USB_RESET_INTERFACE_SUPPORT_MS_OS_20_DESCRIPTOR=1
+    PICO_STDIO_USB_RESET_INTERFACE_MS_OS_20_DESCRIPTOR_ITF=2
+    PICO_STDIO_USB_RESET_INTERFACE_SUPPORT_RESET_TO_BOOTSEL=1
+    PICO_STDIO_USB_RESET_BOOTSEL_INTERFACE_DISABLE_MASK=0
+)
+
+pico_add_extra_outputs(rp2350_winusb)
+</code></pre>
+
+            <h3>5.2 usb_descriptors.c（改自 dev_multi_cdc）</h3>
+            <p>关键修改：<strong>bcdUSB = 0x0210</strong>，VID/PID 用 Raspberry Pi：</p>
+            <pre><code class="language-c">#define CDC_EXAMPLE_VID     0x2E8A  // Raspberry Pi VID
+#define CDC_EXAMPLE_PID     0x000A  // LevelekLs WINUSB PID
+#define CDC_EXAMPLE_BCD     0x0210  // USB 2.1 (Windows reads MSOS 2.0)
+</code></pre>
+            <p>其余 CDC 接口配置不变（参考 dev_multi_cdc）。</p>
+
+            <h2>6. 实际效果</h2>
+            <p>烧录后，Windows 设备管理器：</p>
+            <pre><code>USB 控制器
+└── USB Composite Device
+    ├── USB Serial Device (COM3)            ← CDC, Windows 自动驱动
+    └── LevelekLs WINUSB Device             ← WINUSB, WinUSB.sys 自动装
+</code></pre>
+            <p>无黄色感叹号，无 Zadig，无 .inf 文件。</p>
+
+            <p>PowerShell 验证：</p>
+            <pre><code class="language-powershell">PS&gt; Get-PnpDevice -InstanceId "USB\VID_2E8A*"
+
+Status     Class           FriendlyName
+------     -----           ------------
+OK         USB Serial         USB Serial Device (COM3)
+OK         USB               LevelekLs WINUSB Device
+</code></pre>
+
+            <h2>7. 主机端访问</h2>
+
+            <h3>7.1 Python libusb</h3>
+            <pre><code class="language-python">import usb.core
+import usb.util
+
+dev = usb.core.find(idVendor=0x2E8A, idProduct=0x000A)
+if dev is None:
+    raise ValueError("Device not found")
+
+# claim WINUSB interface (interface 2)
+dev.set_configuration()
+ep_out = dev[0][(2, 0)][0]  # WINUSB bulk OUT
+ep_in  = dev[0][(2, 0)][1]  # WINUSB bulk IN
+
+# send/receive
+ep_out.write(b"Hello WINUSB\n")
+data = ep_in.read(64)
+</code></pre>
+
+            <h3>7.2 C++ WinUSB API</h3>
+            <pre><code class="language-cpp">#include &lt;windows.h&gt;
+#include &lt;winusb.h&gt;
+
+HANDLE hDevice = CreateFile(L"\\\\?\\YourDevice#...", ...);
+WINUSB_INTERFACE_HANDLE hInterface;
+WinUsb_Initialize(hDevice, &hInterface);
+// ...bulk transfer...
+</code></pre>
+
+            <h2>8. 调试踩坑总结</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>问题</th>
+                        <th>原因</th>
+                        <th>解决</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>bcdUSB=0x0200 不读 BOS</td>
+                        <td>Windows 1.x 不强制读</td>
+                        <td>改 0x0210</td>
+                    </tr>
+                    <tr>
+                        <td>GUID 写错</td>
+                        <td>用错 MSOS 2.0 GUID</td>
+                        <td>用 <code>{D8DD60DF-4589-4CC7-9CD2-659D9E648A9F}</code></td>
+                    </tr>
+                    <tr>
+                        <td>bDevCapabilityType=0x00</td>
+                        <td>应为 0x05 PLATFORM</td>
+                        <td>改 0x05</td>
+                    </tr>
+                    <tr>
+                        <td>wIndex 不检查</td>
+                        <td>必须 = 0x07</td>
+                        <td>加检查</td>
+                    </tr>
+                    <tr>
+                        <td>bmRequestType mask 错</td>
+                        <td>0xC0 & 0x60 != 0x40</td>
+                        <td>精确比较 0xC0</td>
+                    </tr>
+                    <tr>
+                        <td>自己写描述符不全</td>
+                        <td>缺 Registry Property</td>
+                        <td><strong>用 SDK reset_interface</strong></td>
+                    </tr>
+                    <tr>
+                        <td>dev_lowlevel 不支持分包</td>
+                        <td>限制 64 字节</td>
+                        <td>用完整 TinyUSB stack</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>9. 完整项目地址</h2>
+            <ul>
+                <li>源码: <a href="https://github.com/usgodloveyou">GitHub Repo</a></li>
+                <li>SDK: <a href="https://github.com/raspberrypi/pico-sdk">Pico SDK 2.2.0+</a></li>
+                <li>烧录工具: <code>picotool load -x sdk_winusb.elf</code></li>
+            </ul>
+
+            <h2>10. 结论</h2>
+            <p>RP2350 + Pico SDK 实现 <strong>WINUSB 自动装驱动</strong> 的关键：</p>
+            <ol>
+                <li>✅ 使用 SDK 内置 reset_interface（自动提供 MS OS 2.0 描述符）</li>
+                <li>✅ bcdUSB = 0x0210</li>
+                <li>✅ 启用 <code>PICO_STDIO_USB_RESET_INTERFACE_SUPPORT_MS_OS_20_DESCRIPTOR=1</code></li>
+                <li>✅ VID = 0x2E8A + PID 唯一</li>
+            </ol>
+            <p><strong>整个方案不需要自己写 166 字节 MS OS 2.0 描述符</strong>——SDK 已经处理好了。</p>
+
+            <hr>
+
+            <p><strong>关于作者</strong>：10 年嵌入式开发经验，专注 USB / 实时系统 / 工业控制。RP2350 + WINUSB 解决了我们项目的关键瓶颈，希望对大家有帮助。</p>
+
+            <p><strong>相关链接</strong>：</p>
+            <ul>
+                <li><a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/microsoft-os-2-0-descriptors-specification">Microsoft OS 2.0 Descriptors Specification</a></li>
+                <li><a href="https://github.com/raspberrypi/pico-sdk">Raspberry Pi Pico SDK</a></li>
+                <li><a href="https://wicg.github.io/webusb/">WebUSB Reference</a></li>
+            </ul>
+        </article>
+
+        <!-- ★ 自动上一篇/下一篇导航 ★ -->
+
+
+            <!-- ★ 上一篇/下一篇导航 -->
+            <div id="post-nav-container" class="mt-5"></div>
+        </article>
+    </main>
+
+    <footer class="bg-body-tertiary border-top mt-5 py-4">
+        <div class="container text-center text-secondary">
+            © 2026 Zhou Yue · 用 <i class="bi bi-heart-fill text-danger"></i> 和 <i class="bi bi-tools"></i> 写
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/particles.js"></script>
+    <script src="../assets/theme.js"></script>
+    <script src="../assets/nav.js"></script>
+</body>
+</html>
+PLACEHOLDER_END

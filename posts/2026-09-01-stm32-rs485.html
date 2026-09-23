@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STM32 RS485 总线调试实战</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-light.min.css" id="hljs-theme-light">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css" id="hljs-theme-dark" disabled>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.10.0/tsparticles.bundle.min.js"></script>
+    <script>
+        function syncHljsTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.getElementById('hljs-theme-light').disabled = isDark;
+            document.getElementById('hljs-theme-dark').disabled = !isDark;
+        }
+        syncHljsTheme();
+        document.addEventListener('themeChanged', syncHljsTheme);
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+            AOS.init({ duration: 600, once: true });
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            mermaid.initialize({ startOnLoad: true, theme: isDark ? 'dark' : 'default' });
+        });
+    </script>
+</head>
+<body>
+    <div id="tsparticles" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></div>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="../index.html"><i class="bi bi-cpu"></i> Zhou Yue 嵌入式博客</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html"><i class="bi bi-house"></i> 首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../timeline.html"><i class="bi bi-clock-history"></i> 时间线</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../archive.html"><i class="bi bi-archive"></i> 归档</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../tags.html"><i class="bi bi-tags"></i> 标签</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../search.html"><i class="bi bi-search"></i> 搜索</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../about.html"><i class="bi bi-person"></i> 关于</a></li>
+                </ul>
+                <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-2"><i class="bi bi-moon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <article class="post-content card shadow-sm p-4">
+            <header class="mb-4 pb-3 border-bottom" data-aos="fade-up">
+                <time class="text-secondary small">
+                    <i class="bi bi-calendar3"></i> 2026-09-01
+                    <i class="bi bi-clock ms-2"></i> 10 分钟阅读
+                    <i class="bi bi-eye ms-2"></i> Embedded · 分类
+                </time>
+                <h1 class="mt-2 mb-3">
+                    <i class="bi bi-cpu text-primary"></i> STM32 RS485 总线调试实战
+                </h1>
+                <div class="post-tags">
+                    <span class="badge text-bg-secondary">STM32</span>
+                    <span class="badge text-bg-secondary">RS485</span>
+                    <span class="badge text-bg-secondary">Modbus</span>
+                    <span class="badge text-bg-secondary">Embedded</span>
+                </div>
+            </header>
+
+            <h2>硬件设计要点</h2>
+            <ul>
+                <li>差分信号 120Ω 终端电阻</li>
+                <li>收发自动切换电路 (RE/DE 控制)</li>
+                <li>共模电压范围 ±7V</li>
+                <li>隔离保护 (光耦 + DC-DC)</li>
+            </ul>
+
+            <h2>Modbus 协议</h2>
+            <p>主机从机一问一答。功能码 0x03 读保持寄存器，0x06 写单寄存器。</p>
+
+            <pre><code class="language-c">uint8_t modbus_crc(uint8_t *buf, int len) {
+    uint16_t crc = 0xFFFF;
+    for (int i = 0; i < len; i++) {
+        crc ^= buf[i];
+        for (int j = 0; j < 8; j++) {
+            if (crc & 1) crc = (crc >> 1) ^ 0xA001;
+            else crc >>= 1;
+        }
+    }
+    return crc;
+}</code></pre>
+
+            <h2>常见坑</h2>
+            <ul>
+                <li>收发切换时序不对 → 字节丢失</li>
+                <li>终端电阻错配 → 信号反射</li>
+                <li>波特率不匹配 → 数据乱码</li>
+            </ul>
+
+            <div id="post-nav-container" class="mt-5"></div>
+        </article>
+    </main>
+
+    <footer class="bg-body-tertiary border-top mt-5 py-4">
+        <div class="container text-center text-secondary">
+            © 2026 Zhou Yue · 用 <i class="bi bi-heart-fill text-danger"></i> 和 <i class="bi bi-tools"></i> 写
+        </div>
+    </footer>
+
+    <a href="#top" id="back-to-top" class="btn btn-primary rounded-circle position-fixed shadow"
+       style="bottom: 30px; right: 30px; display: none; z-index: 999; width: 50px; height: 50px;">
+        <i class="bi bi-arrow-up fs-5"></i>
+    </a>
+    <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, #0d6efd, #6610f2); z-index: 1000; width: 0;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/particles.js"></script>
+    <script src="../assets/theme.js"></script>
+    <script src="../assets/nav.js"></script>
+    <script src="../assets/enhance.js"></script>
+</body>
+</html>

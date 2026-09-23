@@ -1,0 +1,50 @@
+[
+    {
+        "url": "posts/2026-09-23-rp2350-winusb.html",
+        "title": "RP2350 WINUSB 自动装驱动 — 完整实战方案",
+        "date": "2026-09-23",
+        "category": "USB",
+        "tags": ["RP2350", "Pico 2", "WINUSB", "TinyUSB", "USB", "Embedded"],
+        "description": "在 RP2350 / Raspberry Pi Pico 2 上实现 USB vendor class 设备，让 Windows 自动识别并安装 WinUSB.sys 驱动，无需 Zadig、无需 .inf 文件。",
+        "author": "Zhou Yue",
+        "readingTime": 12,
+        "wordCount": 3500,
+        "updated": "2026-09-23"
+    },
+    {
+        "url": "posts/2026-09-15-cmsis-fft.html",
+        "title": "CMSIS-DSP Q15 FFT 性能对比 — RP2040 vs RP2350",
+        "date": "2026-09-15",
+        "category": "DSP",
+        "tags": ["CMSIS-DSP", "ARM", "DSP", "FFT", "RP2040", "RP2350"],
+        "description": "对比 KISS FFT, CMSIS-DSP, ARM DSP 库在 RP2040/RP2350 上的性能差异，浮点 vs 定点优化。",
+        "author": "Zhou Yue",
+        "readingTime": 8,
+        "wordCount": 2200,
+        "updated": "2026-09-15"
+    },
+    {
+        "url": "posts/2026-09-10-qemu-linux-driver.html",
+        "title": "QEMU 模拟 i.MX6ULL 跑 Linux 6.1 — 字符设备驱动实战",
+        "date": "2026-09-10",
+        "category": "Linux",
+        "tags": ["QEMU", "Linux", "Kernel", "Driver", "i.MX6ULL"],
+        "description": "用 QEMU 模拟 i.MX6ULL 开发板，编译运行 Linux 6.1 内核，编写编译加载字符设备驱动模块。",
+        "author": "Zhou Yue",
+        "readingTime": 15,
+        "wordCount": 4200,
+        "updated": "2026-09-10"
+    },
+    {
+        "url": "posts/2026-09-01-stm32-rs485.html",
+        "title": "STM32 RS485 总线调试实战",
+        "date": "2026-09-01",
+        "category": "Embedded",
+        "tags": ["STM32", "RS485", "Modbus", "Embedded"],
+        "description": "RS485 硬件设计要点、软件实现、Modbus 协议解析与常见坑。",
+        "author": "Zhou Yue",
+        "readingTime": 10,
+        "wordCount": 2800,
+        "updated": "2026-09-01"
+    }
+]

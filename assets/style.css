@@ -1,0 +1,294 @@
+/* =====================================================================
+ * style.css — Zhou Yue 静态博客样式 (Bootstrap 兼容版)
+ *
+ * 关键: 用 CSS 变量覆盖 Bootstrap 的颜色变量,
+ *       让明/暗主题同时影响 Bootstrap + 自定义内容。
+ * =====================================================================*/
+
+/* ---------- 亮色主题 (默认) ---------- */
+:root {
+    /* Bootstrap 颜色变量覆盖 */
+    --bs-body-bg: #ffffff;
+    --bs-body-color: #24292e;
+    --bs-emphasis-color: #1a1a1a;
+    --bs-secondary-bg: #f6f8fa;
+    --bs-tertiary-bg: #f6f8fa;
+    --bs-border-color: #e1e4e8;
+    --bs-link-color: #0366d6;
+    --bs-link-hover-color: #0246a8;
+    --bs-code-color: #24292e;
+
+    /* 自定义变量 */
+    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    --border-radius: 6px;
+}
+
+/* ---------- 暗色主题 (Bootstrap 暗色 + 自定义) ---------- */
+:root[data-theme="dark"] {
+    --bs-body-bg: #0d1117;
+    --bs-body-color: #c9d1d9;
+    --bs-emphasis-color: #f0f6fc;
+    --bs-secondary-bg: #161b22;
+    --bs-tertiary-bg: #161b22;
+    --bs-border-color: #30363d;
+    --bs-link-color: #58a6ff;
+    --bs-link-hover-color: #79c0ff;
+    --bs-code-color: #c9d1d9;
+}
+
+/* ---------- 基础样式 ---------- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.7;
+}
+
+code {
+    background: var(--bs-secondary-bg);
+    color: var(--bs-code-color);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+}
+
+pre {
+    background: var(--bs-secondary-bg);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    overflow-x: auto;
+    line-height: 1.5;
+    border: 1px solid var(--bs-border-color);
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+}
+
+/* ========== ★ 代码高亮 (hljs) 自适应主题 ========== */
+/* hljs 主题样式由 <link id="hljs-theme-light/dark"> 控制 */
+
+/* 浅色主题 - 代码块背景 */
+:root pre {
+    background: #f6f8fa !important;
+    color: #24292e;
+}
+
+/* 暗色主题 - 代码块背景 */
+:root[data-theme="dark"] pre {
+    background: #161b22 !important;
+    color: #c9d1d9;
+}
+
+/* 内联代码 */
+blockquote {
+    border-left: 4px solid var(--bs-border-color);
+    padding: 0 1rem;
+    color: var(--bs-secondary-color, #6a737d);
+}
+
+/* ---------- 文章卡片 ---------- */
+article.post-card time {
+    color: var(--bs-secondary-color, #6a737d);
+    font-size: 0.85rem;
+}
+
+/* ---------- 标签 badges (Bootstrap 内置 badge) ---------- */
+/* 使用 Bootstrap .badge 类 */
+
+/* ---------- 文章底部导航 (上一篇/下一篇) ---------- */
+.post-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 3rem 0 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--bs-border-color);
+}
+
+.post-nav a {
+    flex: 1;
+    padding: 1rem;
+    background: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--border-radius);
+    color: var(--bs-body-color);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.post-nav a:hover {
+    border-color: var(--bs-link-color);
+    color: var(--bs-link-color);
+}
+
+.post-nav .label {
+    display: block;
+    color: var(--bs-secondary-color, #6a737d);
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+}
+
+.post-nav .title {
+    display: block;
+    font-weight: 500;
+}
+
+.post-nav .next {
+    text-align: right;
+}
+
+/* ---------- 搜索高亮 ---------- */
+mark {
+    background: #fff3a0;
+    color: #24292e;
+    padding: 0.1em 0.2em;
+    border-radius: 2px;
+}
+
+:root[data-theme="dark"] mark {
+    background: #5a4a00;
+    color: #ffd54f;
+}
+
+/* ---------- 标签筛选 ---------- */
+.tag-section-title {
+    margin-top: 2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+/* ---------- 主题切换按钮 ---------- */
+#theme-toggle {
+    transition: transform 0.2s;
+}
+
+#theme-toggle:hover {
+    transform: rotate(20deg);
+}
+
+/* ---------- 响应式微调 ---------- */
+@media (max-width: 600px) {
+    .post-nav {
+        flex-direction: column;
+    }
+    .post-nav .next {
+        text-align: left;
+    }
+}
+
+/* ---------- 卡片 hover 效果 ---------- */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--bs-body-bg);
+    /* backdrop-filter 让背景粒子若隐若现 */
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+}
+
+:root[data-theme="dark"] .card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ---------- 背景粒子层: 暗色时调亮, 亮色时调淡 ---------- */
+:root #tsparticles {
+    opacity: 0.6;
+}
+:root[data-theme="dark"] #tsparticles {
+    opacity: 0.8;
+}
+
+/* ---------- 主内容区半透明 (让背景粒子若隐若现) ---------- */
+main.container {
+    background: transparent;
+}
+
+.navbar, footer {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.7) !important;
+}
+
+:root[data-theme="dark"] .navbar,
+:root[data-theme="dark"] footer {
+    background: rgba(13, 17, 23, 0.7) !important;
+}
+
+/* ---------- 时间线 ---------- */
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--bs-primary) 0%, var(--bs-secondary) 100%);
+}
+
+.timeline-dot {
+    box-shadow: 0 0 0 4px var(--bs-body-bg);
+}
+
+/* ---------- 分类卡片 ---------- */
+.category-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.15) !important;
+}
+
+/* ---------- TOC (文章目录) ---------- */
+.toc {
+    background: var(--bs-secondary-bg);
+    border-left: 3px solid var(--bs-primary);
+}
+
+.toc-list {
+    font-size: 0.9rem;
+}
+
+.toc-list .toc-level-1 {
+    padding-left: 1.5rem;
+}
+
+.toc-list a {
+    color: var(--bs-body-color);
+    display: block;
+    padding: 0.25rem 0;
+    transition: color 0.2s;
+}
+
+.toc-list a:hover {
+    color: var(--bs-primary);
+}
+
+/* ---------- 阅读进度条 ---------- */
+#reading-progress {
+    transition: width 0.1s ease;
+}
+
+/* ---------- 复制代码按钮 ---------- */
+pre:hover .copy-btn {
+    opacity: 1 !important;
+}
+
+/* ---------- 上一/下一篇 ---------- */
+.post-nav a:hover {
+    transform: translateX(2px);
+}
+.post-nav .next:hover {
+    transform: translateX(-2px);
+}
+
+/* ---------- stretched-link 兼容 (Bootstrap card 链接覆盖) ---------- */
+.card .stretched-link::after {
+    z-index: 1;
+}

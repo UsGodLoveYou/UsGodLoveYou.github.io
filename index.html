@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zhou Yue 嵌入式博客</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="alternate" type="application/rss+xml" title="Zhou Yue 嵌入式博客" href="feed.xml">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-light.min.css" id="hljs-theme-light">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css" id="hljs-theme-dark" disabled>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.10.0/tsparticles.bundle.min.js"></script>
+    <script>
+        function syncHljsTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.getElementById('hljs-theme-light').disabled = isDark;
+            document.getElementById('hljs-theme-dark').disabled = !isDark;
+        }
+        syncHljsTheme();
+        document.addEventListener('themeChanged', syncHljsTheme);
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+            AOS.init({ duration: 600, once: true });
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            mermaid.initialize({ startOnLoad: true, theme: isDark ? 'dark' : 'default' });
+        });
+    </script>
+</head>
+<body>
+    <div id="tsparticles" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></div>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="bi bi-cpu text-primary"></i> Zhou Yue 嵌入式博客
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="index.html"><i class="bi bi-house"></i> 首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="timeline.html"><i class="bi bi-clock-history"></i> 时间线</a></li>
+                    <li class="nav-item"><a class="nav-link" href="archive.html"><i class="bi bi-archive"></i> 归档</a></li>
+                    <li class="nav-item"><a class="nav-link" href="tags.html"><i class="bi bi-tags"></i> 标签</a></li>
+                    <li class="nav-item"><a class="nav-link" href="search.html"><i class="bi bi-search"></i> 搜索</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="bi bi-person"></i> 关于</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="feed.xml" title="RSS Feed">
+                            <i class="bi bi-rss"></i> RSS
+                        </a>
+                    </li>
+                </ul>
+                <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-2"><i class="bi bi-moon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ★ Hero 区 -->
+    <section class="bg-body-tertiary py-5 mb-5">
+        <div class="container text-center" data-aos="fade-up">
+            <h1 class="display-4 fw-bold">
+                <i class="bi bi-cpu text-primary"></i> 嵌入式开发博客
+            </h1>
+            <p class="lead text-secondary mt-3 mb-4">
+                RP2350 · WINUSB · TinyUSB · Linux 内核 · DSP · QEMU · 实战经验
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <span class="badge text-bg-primary fs-6"><i class="bi bi-file-earmark-code"></i> 4 篇文章</span>
+                <span class="badge text-bg-success fs-6"><i class="bi bi-tags"></i> 16+ 标签</span>
+                <span class="badge text-bg-info fs-6"><i class="bi bi-bookmark"></i> 4 分类</span>
+                <span class="badge text-bg-secondary fs-6"><i class="bi bi-clock"></i> 持续更新</span>
+            </div>
+        </div>
+    </section>
+
+    <main class="container my-5">
+        <!-- ★ 最新文章卡片 -->
+        <h2 class="mb-4">
+            <i class="bi bi-stars text-warning"></i> 最新文章
+        </h2>
+        <div id="latest-container" class="mb-5">
+            <div class="text-secondary">加载中...</div>
+        </div>
+
+        <!-- ★ 按分类浏览 -->
+        <h2 class="mb-4 mt-5">
+            <i class="bi bi-grid-3x3-gap text-success"></i> 按分类浏览
+        </h2>
+        <div id="categories-container" class="row g-3 mb-5">
+            <div class="text-secondary">加载中...</div>
+        </div>
+
+        <!-- ★ 热门标签 -->
+        <h2 class="mb-4 mt-5">
+            <i class="bi bi-tags-fill text-info"></i> 热门标签
+        </h2>
+        <div id="tags-container" class="d-flex flex-wrap gap-2 mb-5">
+            <div class="text-secondary">加载中...</div>
+        </div>
+
+        <!-- ★ Mermaid 架构图 -->
+        <div class="card shadow-sm mb-5" data-aos="fade-up">
+            <div class="card-body">
+                <h3 class="h5"><i class="bi bi-diagram-3"></i> 博客系统架构</h3>
+                <pre class="mermaid">
+flowchart LR
+    A[访客浏览器] --> B[GitHub Pages CDN]
+    B --> C{HTML 页面}
+    C --> D[Bootstrap 5]
+    C --> E[Bootstrap Icons]
+    C --> F[Highlight.js]
+    C --> G[AOS 动画]
+    C --> H[Mermaid 图表]
+    C --> I[客户端 JS 搜索]
+    C --> J[tsparticles 粒子]
+    C --> K[enhance.js 增强]
+    style B fill:#0078d4,color:#fff
+    style D fill:#7952b3,color:#fff
+    style F fill:#f1e05b,color:#000
+                </pre>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-body-tertiary border-top mt-5 py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8 text-center text-md-start text-secondary">
+                    © 2026 Zhou Yue · 用 <i class="bi bi-heart-fill text-danger"></i> 和 <i class="bi bi-tools"></i> 写
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <a href="feed.xml" class="text-secondary text-decoration-none me-3" title="RSS">
+                        <i class="bi bi-rss"></i> RSS
+                    </a>
+                    <a href="sitemap.xml" class="text-secondary text-decoration-none" title="Sitemap">
+                        <i class="bi bi-diagram-2"></i> Sitemap
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#top" id="back-to-top" class="btn btn-primary rounded-circle position-fixed shadow"
+       style="bottom: 30px; right: 30px; display: none; z-index: 999; width: 50px; height: 50px;">
+        <i class="bi bi-arrow-up fs-5"></i>
+    </a>
+
+    <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, #0d6efd, #6610f2); z-index: 1000; width: 0;"></div>
+
+    <script>
+        // ★ 文章数据 (同步 data/posts.json)
+        const POSTS = [
+            {
+                "url": "posts/2026-09-23-rp2350-winusb.html",
+                "title": "RP2350 WINUSB 自动装驱动 — 完整实战方案",
+                "date": "2026-09-23",
+                "category": "USB",
+                "tags": ["RP2350", "Pico 2", "WINUSB", "TinyUSB", "USB", "Embedded"],
+                "description": "在 RP2350 / Raspberry Pi Pico 2 上实现 USB vendor class 设备，让 Windows 自动识别并安装 WinUSB.sys 驱动，无需 Zadig、无需 .inf 文件。",
+                "readingTime": 12
+            },
+            {
+                "url": "posts/2026-09-15-cmsis-fft.html",
+                "title": "CMSIS-DSP Q15 FFT 性能对比 — RP2040 vs RP2350",
+                "date": "2026-09-15",
+                "category": "DSP",
+                "tags": ["CMSIS-DSP", "ARM", "DSP", "FFT", "RP2040", "RP2350"],
+                "description": "对比 KISS FFT, CMSIS-DSP, ARM DSP 库在 RP2040/RP2350 上的性能差异。",
+                "readingTime": 8
+            },
+            {
+                "url": "posts/2026-09-10-qemu-linux-driver.html",
+                "title": "QEMU 模拟 i.MX6ULL 跑 Linux 6.1 — 字符设备驱动实战",
+                "date": "2026-09-10",
+                "category": "Linux",
+                "tags": ["QEMU", "Linux", "Kernel", "Driver", "i.MX6ULL"],
+                "description": "用 QEMU 模拟 i.MX6ULL 开发板，编译运行 Linux 6.1 内核，编写编译加载字符设备驱动模块。",
+                "readingTime": 15
+            },
+            {
+                "url": "posts/2026-09-01-stm32-rs485.html",
+                "title": "STM32 RS485 总线调试实战",
+                "date": "2026-09-01",
+                "category": "Embedded",
+                "tags": ["STM32", "RS485", "Modbus", "Embedded"],
+                "description": "RS485 硬件设计要点、软件实现、Modbus 协议解析与常见坑。",
+                "readingTime": 10
+            }
+        ];
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        // ★ 渲染最新文章 (前 2 篇)
+        function renderLatest() {
+            const container = document.getElementById('latest-container');
+            if (!container) return;
+            const latest = POSTS.slice(0, 2);
+            container.innerHTML = `
+                <div class="row g-3">
+                    ${latest.map((p, i) => `
+                        <div class="col-md-6" data-aos="fade-up" data-aos-delay="${i * 100}">
+                            <article class="card shadow-sm h-100">
+                                <div class="card-body">
+                                    <time class="text-secondary small">
+                                        <i class="bi bi-calendar3"></i> ${p.date}
+                                        <span class="ms-2"><i class="bi bi-clock"></i> ${p.readingTime} 分钟</span>
+                                    </time>
+                                    <h3 class="h5 card-title mt-2 mb-2">
+                                        <a href="${p.url}" class="text-decoration-none stretched-link">${escapeHtml(p.title)}</a>
+                                    </h3>
+                                    <p class="card-text text-secondary">${escapeHtml(p.description || '')}</p>
+                                    <div class="post-tags">
+                                        <span class="badge text-bg-secondary">${p.category}</span>
+                                        ${(p.tags || []).slice(0, 3).map(t =>
+                                            `<a href="tags.html#${encodeURIComponent(t)}"
+                                               class="badge text-bg-light text-decoration-none">
+                                                ${escapeHtml(t)}
+                                            </a>`
+                                        ).join('')}
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="text-center mt-3">
+                    <a href="archive.html" class="btn btn-outline-primary">
+                        查看全部文章 <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            `;
+        }
+
+        // ★ 按分类
+        function renderCategories() {
+            const container = document.getElementById('categories-container');
+            if (!container) return;
+
+            const cats = {};
+            POSTS.forEach(p => {
+                const c = p.category || 'Other';
+                cats[c] = (cats[c] || 0) + 1;
+            });
+
+            const iconMap = {
+                'USB': 'bi-usb-symbol',
+                'DSP': 'bi-graph-up',
+                'Linux': 'bi-terminal',
+                'Embedded': 'bi-cpu'
+            };
+
+            container.innerHTML = Object.entries(cats).map(([cat, count]) => `
+                <div class="col-md-3 col-sm-6" data-aos="zoom-in">
+                    <a href="tags.html" class="text-decoration-none">
+                        <div class="card shadow-sm text-center p-4 h-100 category-card">
+                            <i class="bi ${iconMap[cat] || 'bi-tag'} display-3 text-primary mb-3"></i>
+                            <h5 class="mb-2">${escapeHtml(cat)}</h5>
+                            <span class="badge text-bg-secondary">${count} 篇文章</span>
+                        </div>
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        // ★ 热门标签
+        function renderTags() {
+            const container = document.getElementById('tags-container');
+            if (!container) return;
+
+            const tags = {};
+            POSTS.forEach(p => {
+                (p.tags || []).forEach(t => {
+                    tags[t] = (tags[t] || 0) + 1;
+                });
+            });
+
+            const sorted = Object.entries(tags).sort((a, b) => b[1] - a[1]).slice(0, 15);
+
+            container.innerHTML = sorted.map(([tag, count]) => `
+                <a href="tags.html#${encodeURIComponent(tag)}"
+                   class="badge text-bg-secondary text-decoration-none fs-6 py-2 px-3">
+                    ${escapeHtml(tag)} <span class="badge text-bg-light ms-1">${count}</span>
+                </a>
+            `).join('');
+        }
+
+        renderLatest();
+        renderCategories();
+        renderTags();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/particles.js"></script>
+    <script src="assets/theme.js"></script>
+</body>
+</html>
